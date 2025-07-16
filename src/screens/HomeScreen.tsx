@@ -1,7 +1,24 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { getAuth, signOut } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types'; // adjust path as needed
 
-export default function HomeScreen({ navigation }: any) {
+type HomeScreenNavProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+export default function HomeScreen() {
+  const navigation = useNavigation<HomeScreenNavProp>();
+  const auth = getAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      Alert.alert('Logout Failed', 'Something went wrong.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/logo.png')} style={styles.logo} />
@@ -15,10 +32,13 @@ export default function HomeScreen({ navigation }: any) {
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('VetHelp')}>
         <Text style={styles.buttonText}>🆘 Emergency Vet Help</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutText}>🚪 Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,5 +84,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  logoutButton: {
+    marginTop: 20,
+    padding: 12,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#D9534F',
+    fontWeight: '600',
   },
 });
