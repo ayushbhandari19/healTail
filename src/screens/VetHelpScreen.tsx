@@ -7,7 +7,10 @@ import {
   Linking,
   FlatList,
   TextInput,
+  ScrollView,
   SafeAreaView,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import vetClinics from '../../assets/data/vet.json';
 
@@ -65,37 +68,45 @@ export default function VetHelpScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>🆘 Emergency Vet Help</Text>
-      <Text style={styles.subtext}>Find and contact nearby veterinary clinics</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.header}>🆘 Emergency Vet Help</Text>
+        <Text style={styles.subtext}>Find and contact nearby veterinary clinics</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Search by name or location"
-        value={searchQuery}
-        onChangeText={(text) => setSearchQuery(text)}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Search by name or location"
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
+        />
 
-      <FlatList
-        data={filteredClinics}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-      />
+        <FlatList
+          data={filteredClinics}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.list}
+          ListEmptyComponent={<Text style={{ textAlign: 'center', color: '#888' }}>No clinics found.</Text>}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFF8F2',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#FFF8F2',
   },
   header: {
     fontSize: 26,
     fontWeight: '800',
-    marginTop: 20,
+    marginTop: 16,
     marginBottom: 4,
     textAlign: 'center',
     color: '#333',
@@ -103,7 +114,7 @@ const styles = StyleSheet.create({
   subtext: {
     fontSize: 14,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
     color: '#777',
   },
   input: {
@@ -123,6 +134,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 16,
     elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   name: {
     fontSize: 18,
